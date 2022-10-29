@@ -14,7 +14,7 @@ def gradient_descent(x, y, alpha = 0.01, use_alpha_descent = False, weights_clos
     n = x.shape[0] # number of samples
     assert n == y.shape[0] , 'y and x sizes do not match!'
     param_num = x.shape[1] + 1
-    w = np.zeros((param_num, 1)) # w[0] - is a free member
+    w = np.zeros(param_num) # w[0] - is a free member
     x = np.concatenate((np.ones((n, 1)), x), axis=1)
     alpha *= 2/n
     step_koeff = alpha
@@ -27,7 +27,7 @@ def gradient_descent(x, y, alpha = 0.01, use_alpha_descent = False, weights_clos
             w[i] -= step_koeff * np.dot(y_diff.T, x[:, i])
         if weights_closeness > 0 and np.linalg.norm(old_w - w) / np.linalg.norm(old_w) < weights_closeness:
             break
-    return w.T
+    return w
 
 # -----------------------------------------------------------
 # Stochastic Gradient Descent function
