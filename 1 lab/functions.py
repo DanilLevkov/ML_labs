@@ -25,7 +25,7 @@ def gradient_descent(x, y, alpha = 0.01, use_alpha_descent = False, weights_clos
         old_w = w
         for i in range(param_num):
             w[i] -= step_koeff * np.dot(y_diff, x[:, i])
-        if weights_closeness > 0 and np.linalg.norm(old_w - w) < weights_closeness:
+        if weights_closeness > 0 and np.linalg.norm(old_w - w) / np.linalg.norm(old_w) < weights_closeness:
             break
     return w
 
