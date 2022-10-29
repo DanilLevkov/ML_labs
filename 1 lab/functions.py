@@ -12,10 +12,10 @@ import numpy as np
 # -----------------------------------------------------------
 def gradient_descent(x, y, alpha = 0.01, use_alpha_descent = False, weights_closeness = 0,  max_iteration_num = 1000):
     n = x.shape[0] # number of samples
-    assert n == y.size() , 'y and x sizes do not match!'
+    assert n == y.shape[0] , 'y and x sizes do not match!'
     param_num = x.shape[1] + 1
-    w = np.zeros(param_num) # w[0] - is a free member
-    x = np.append(np.ones(n), x, axis=1)
+    w = np.zeros((param_num, 1)) # w[0] - is a free member
+    x = np.concatenate((np.ones((n, 1)), x), axis=1)
     alpha *= 2/n
     step_koeff = alpha
     for k in range(max_iteration_num):
@@ -24,10 +24,10 @@ def gradient_descent(x, y, alpha = 0.01, use_alpha_descent = False, weights_clos
             step_koeff = alpha / (k+1); 
         old_w = w
         for i in range(param_num):
-            w[i] -= step_koeff * np.dot(y_diff, x[:, i])
+            w[i] -= step_koeff * np.dot(y_diff.T, x[:, i])
         if weights_closeness > 0 and np.linalg.norm(old_w - w) / np.linalg.norm(old_w) < weights_closeness:
             break
-    return w
+    return w.T
 
 # -----------------------------------------------------------
 # Stochastic Gradient Descent function
@@ -38,10 +38,10 @@ def gradient_descent(x, y, alpha = 0.01, use_alpha_descent = False, weights_clos
 # -----------------------------------------------------------
 def gradient_descent_rand(x, y, alpha = 0.01, max_iteration_num = 10000):
     n = x.shape[0] # number of samples
-    assert n == y.size() , 'y and x sizes do not match!'
+    assert n == y.shape[0] , 'y and x sizes do not match!'
     param_num = x.shape[1] + 1
     w = np.zeros(param_num) # w[0] - is a free member
-    x = np.append(np.ones(n), x, axis=1)
+    x = np.concatenate((np.ones((n, 1)), x), axis=1)
     alpha *= 2
     for k in range(max_iteration_num):
         i = np.random.randint(n)
@@ -59,12 +59,12 @@ def gradient_descent_rand(x, y, alpha = 0.01, max_iteration_num = 10000):
 # -----------------------------------------------------------
 def gradient_descent_mini_batch(x, y, batch_part = 0.2, alpha = 0.01, max_iteration_num = 10000):
     n = x.shape[0] # number of samples
-    assert n == y.size() , 'y and x sizes do not match!'
+    assert n == y.shape[0] , 'y and x sizes do not match!'
     assert batch_part <= 1
     param_num = x.shape[1] + 1
-    w = np.zeros(param_num) # w[0] - is a free member
-    x = np.append(np.ones(n), x, axis=1)
-    samples_per_step = n * batch_part
+    w = np.zeros((param_num, 1)) # w[0] - is a free member
+    x = np.concatenate((np.ones((n, 1)), x), axis=1)
+    samples_per_step = int(n * batch_part) + 1
     alpha *= 2/samples_per_step
     for k in range(max_iteration_num):
         batch_start = np.random.randint(n-samples_per_step)
