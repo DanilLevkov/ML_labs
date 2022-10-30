@@ -44,9 +44,10 @@ def gradient_descent_rand(x, y, alpha = 0.01, max_iteration_num = 10000):
     x = np.concatenate((np.ones((n, 1)), x), axis=1)
     alpha *= 2
     for k in range(max_iteration_num):
-        i = np.random.randint(n)
-        y_diff = np.dot(x[i,:], w) - y[i] # now it is a number
-        w -= alpha * y_diff * x[i,:].T
+        i = np.random.randint(n-1)
+        x_elem = x[i:i+1,:]
+        y_diff = np.dot(x_elem, w) - y[i:i+1]
+        w = w - alpha * np.dot(x_elem.T, y_diff)
     return w
 
 # -----------------------------------------------------------
@@ -67,8 +68,10 @@ def gradient_descent_mini_batch(x, y, batch_part = 0.2, alpha = 0.01, max_iterat
     samples_per_step = int(n * batch_part) + 1
     alpha *= 2/samples_per_step
     for k in range(max_iteration_num):
-        batch_start = np.random.randint(n-samples_per_step)
-        x_batch = x[batch_start:batch_start+samples_per_step]
-        y_batch = y[batch_start:batch_start+samples_per_step]
-        w = w - alpha * np.dot(x_batch.T, (np.dot(x_batch, w) - y_batch))
+        batch_indxes = np.random.choice(n, samples_per_step, replace=False)
+        batched_x = x[batch_indxes]
+        batched_y = y[batch_indxes]
+        y_diff = np.dot(batched_x, w) - batched_y # includes ... + w[0]
+        for i in range(param_num):
+            w[i] -= alpha * np.dot(y_diff.T, batched_x[:, i])
     return w
